@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cachoeira Bar e Petiscaria</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --verde: #137b41; --verde-escuro: #0c5a2e; --amarelo: #ffd54f;
+      --cinza-bg: #f7f8fa; --cinza-card: #ffffff; --cinza-borda: #e2e8f0;
+      --texto: #1f2933; --texto-suave: #6b7280; --perigo: #dc2626;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin: 0; background: var(--cinza-bg); color: var(--texto); }
+
+    /* NAVBAR */
+    .navbar { background: #ffffff; border-bottom: 1px solid #e5e7eb; box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06); padding: 8px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .nav-left { display: flex; align-items: center; gap: 12px; }
+    .nav-logo { height: 46px; border-radius: 6px; object-fit: cover; }
+    .nav-title { font-weight: 600; font-size: 1.1rem; color: var(--texto); }
+    .nav-menu { display: flex; align-items: center; gap: 8px; }
+    .nav-btn { border-radius: 999px; padding: 7px 16px; border: none; background: transparent; color: var(--texto-suave); font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s, color 0.15s, transform 0.05s; }
+    .nav-btn.active { background: var(--verde); color: #ffffff; }
+    .nav-btn:hover:not(.active) { background: #edf2f7; color: var(--texto); }
+    .nav-btn.exit { border: 1px solid #e5e7eb; background: #ffffff; }
+    .nav-btn.tv-btn { border: 1px solid #d1d5db; background: #f9fafb; }
+    .nav-btn.tv-btn:hover { background: #e5f6ff; color: #0f172a; transform: translateY(-1px); }
+
+    /* LAYOUT GERAL */
+    .page { max-width: 1160px; margin: 24px auto 40px; padding: 0 16px; }
+    h1.page-title { margin: 0 0 18px; font-size: 1.6rem; color: var(--verde-escuro); }
+    .grid-2 { display: grid; grid-template-columns: 2.2fr 1.1fr; gap: 18px; }
+    @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+    .card { background: var(--cinza-card); border-radius: 14px; border: 1px solid var(--cinza-borda); box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04); padding: 18px 20px 20px; margin-bottom: 14px; }
+    .card-title { margin: 0 0 12px; font-size: 1.05rem; color: var(--verde-escuro); }
+    .card-subtitle { font-size: 0.85rem; color: var(--texto-suave); margin-top: -6px; margin-bottom: 10px; }
+    label { display: block; font-size: 0.85rem; color: var(--texto-suave); margin-bottom: 4px; }
+    input[type="text"], input[type="number"], select { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 0.9rem; outline: none; background: #ffffff; }
+    input[readonly] { background: #f3f4f6; color: #6b7280; }
+    input:focus, select:focus { border-color: var(--verde); box-shadow: 0 0 0 1px rgba(19, 123, 65, 0.16); }
+    .row { display: flex; gap: 12px; }
+    .row > .col { flex: 1; }
+
+    .btn { border-radius: 999px; border: none; padding: 8px 16px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.15s, transform 0.05s, box-shadow 0.15s; white-space: nowrap; }
+    .btn:active { transform: translateY(1px); box-shadow: none; }
+    .btn-primary { background: var(--verde); color: #ffffff; box-shadow: 0 4px 10px rgba(19, 123, 65, 0.25); }
+    .btn-primary:hover { background: var(--verde-escuro); }
+    .btn-secondary { background: var(--amarelo); color: #1f2933; box-shadow: 0 4px 10px rgba(148, 124, 25, 0.25); }
+    .btn-ghost { background: #ffffff; border: 1px solid #d1d5db; color: var(--texto); }
+    .btn-danger { background: #fee2e2; color: var(--perigo); border: 1px solid #fecaca; }
+    .btn-icon { width: 32px; height: 32px; padding: 0; border-radius: 999px; border: 1px solid #d1d5db; background: #ffffff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem; color: var(--texto-suave); transition: background 0.15s, color 0.15s, transform 0.05s; }
+    .btn-icon:hover { background: #f3f4f6; color: var(--texto); transform: translateY(-1px); }
+    .btn + .btn { margin-left: 8px; }
+
+    .chip-status { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 500; background: #e6f6ec; color: var(--verde-escuro); }
+    .chip-status.inactive { background: #fee2e2; color: var(--perigo); }
+
+    /* TABLES */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.88rem; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; }
+    th { text-align: left; font-size: 0.8rem; color: var(--texto-suave); font-weight: 500; }
+    tbody tr:hover { background: #f9fafb; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .muted { color: var(--texto-suave); font-size: 0.85rem; }
+
+    .search-row { display: flex; gap: 10px; margin-top: 4px; }
+
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .section-header-title { font-size: 1.3rem; color: var(--verde-escuro); }
+
+    /* VIEW VISIBILIDADE */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* RESUMO DO PEDIDO */
+    .summary-card-total-box { background: #ecfdf3; border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; }
+    .summary-label { font-size: 0.8rem; color: var(--texto-suave); }
+    .summary-value { font-size: 1.2rem; font-weight: 700; color: var(--verde-escuro); }
+    .summary-row { display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.9rem; }
+    .summary-actions { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; background: #edf2ff; color: #3730a3; margin-left: 4px; }
+    .input-inline { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+
+    /* DASHBOARD */
+    .dash-grid { display: grid; grid-template-columns: 1.5fr 1.1fr; gap: 16px; }
+    @media (max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } }
+    .dash-metric { font-size: 0.92rem; margin-bottom: 4px; }
+    .dash-metric strong { color: var(--verde-escuro); }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img src="logo-cachoeira.svg" alt="Cachoeira Bar e Petiscaria" class="nav-logo" />
+      <div class="nav-title">Cachoeira Bar e Petiscaria</div>
+    </div>
+    <nav class="nav-menu">
+      <button class="nav-btn active" data-view="pedidos">Pedidos</button>
+      <button class="nav-btn" data-view="cardapio">Cardápio</button>
+      <button class="nav-btn" data-view="garcons">Garçons</button>
+      <button class="nav-btn" data-view="mesas">Mesas</button>
+      <button class="nav-btn" data-view="baixa">Pedidos para Baixa</button>
+      <button class="nav-btn" data-view="compras">Compras</button>
+      <button class="nav-btn" data-view="dashboard">Dashboard</button>
+      <!-- BOTÃO TELA DE ESPERA -->
+      <button class="nav-btn tv-btn" id="abrirTelaEsperaBtn"> 📺 Tela de Espera </button>
+      <button class="nav-btn exit" onclick="alert('Sessão encerrada (demo).')"> ↪ Sair </button>
+    </nav>
+  </header>
+
+  <main class="page">
+    <!-- VIEW: PEDIDOS -->
+    <section id="view-pedidos" class="view active">
+      <h1 class="page-title">Lançamento de Pedidos</h1>
+
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <h2 class="card-title">Dados do Pedido</h2>
+            <div class="row">
+              <div class="col">
+                <label for="pedidoNumero">Número do Pedido</label>
+                <input type="text" id="pedidoNumero" readonly />
+              </div>
+              <div class="col">
+                <label for="pedidoGarcom">Garçom</label>
+                <select id="pedidoGarcom">
+                  <option value="">Selecione...</option>
+                </select>
+              </div>
+              <div class="col">
+                <label for="pedidoMesa">Mesa</label>
+                <select id="pedidoMesa">
+                  <option value="">Selecione...</option>
+                </select>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 10px">
+              <div class="col">
+                <label for="pedidoDataHora">Data/Hora</label>
+                <input type="text" id="pedidoDataHora" readonly />
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Adicionar Item</h2>
+            <div class="row">
+              <div class="col">
+                <label for="pedidoBuscarItem">Item do Cardápio</label>
+                <div class="search-row">
+                  <input type="text" id="pedidoBuscarItem" placeholder="Buscar item..." oninput="atualizarSelectItemPedido()" />
+                </div>
+                <select id="pedidoItemSelect" style="margin-top: 8px">
+                  <option value="">Selecione um item...</option>
+                </select>
+              </div>
+              <div class="col" style="max-width: 140px">
+                <label for="pedidoQuantidade">Quantidade</label>
+                <input type="number" id="pedidoQuantidade" min="1" value="1" />
+              </div>
+            </div>
+
+            <button class="btn btn-primary" style="margin-top: 14px" onclick="adicionarItemPedido()">
+              + Adicionar Item
+            </button>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Itens do Pedido</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="text-center">Quantidade</th>
+                  <th class="text-right">Preço Unit.</th>
+                  <th class="text-right">Subtotal</th>
+                  <th class="text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="pedidoItensBody">
+                <tr>
+                  <td colspan="5" class="text-center muted">
+                    Nenhum item adicionado ao pedido.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- RESUMO DO PEDIDO -->
+        <div>
+          <div class="card">
+            <h2 class="card-title">Resumo do Pedido</h2>
+            <p class="card-subtitle">Confira o valor total com e sem a taxa de 10% do garçom.</p>
+
+            <div class="summary-card-total-box">
+              <div class="summary-row">
+                <span>Total sem taxa</span>
+                <strong>R$ <span id="pedidoTotalSemTaxa">0,00</span></strong>
+              </div>
+              <div class="summary-row">
+                <span>Taxa garçom (10%)</span>
+                <span>R$ <span id="pedidoTaxaGarcom">0,00</span></span>
+              </div>
+              <div class="summary-row">
+                <span>Total com taxa</span>
+                <span style="font-weight:700;color:var(--verde-escuro);">R$ <span id="pedidoTotalComTaxa">0,00</span></span>
+              </div>
+            </div>
+
+            <div class="summary-actions">
+              <button class="btn btn-primary" onclick="salvarPedido()"> 🔒 Salvar Pedido </button>
+              <button class="btn btn-secondary" onclick="imprimirComanda()"> 🖨 Imprimir Comanda </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: CARDÁPIO -->
+    <section id="view-cardapio" class="view">
+      <div class="section-header">
+        <h1 class="section-header-title">Cardápio</h1>
+        <button class="btn btn-primary" onclick="novoItemCardapio()"> + Novo Item </button>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Itens do Cardápio <span class="badge" id="cardapioCountBadge">0 itens</span></h2>
+
+        <div class="search-row">
+          <div class="col">
+            <label for="cardapioBusca">Buscar por nome...</label>
+            <input type="text" id="cardapioBusca" placeholder="Digite parte do nome" oninput="renderCardapio()" />
+          </div>
+          <div class="col" style="max-width: 220px">
+            <label for="cardapioCategoriaFiltro">Categoria</label>
+            <select id="cardapioCategoriaFiltro" onchange="renderCardapio()">
+              <option value="">Todas as Categorias</option>
+            </select>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Categoria</th>
+              <th>Preço</th>
+              <th>Status</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="cardapioBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW: GARÇONS -->
+    <section id="view-garcons" class="view">
+      <div class="section-header">
+        <h1 class="section-header-title">Cadastro de Garçons</h1>
+        <button class="btn btn-primary" onclick="novoGarcom()"> + Novo Garçom </button>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Lista de Garçons</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Status</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="garconsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW: MESAS -->
+    <section id="view-mesas" class="view">
+      <div class="section-header">
+        <h1 class="section-header-title">Cadastro de Mesas</h1>
+        <button class="btn btn-primary" onclick="novaMesa()"> + Nova Mesa </button>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Lista de Mesas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Descrição</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="mesasBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW: PEDIDOS PARA BAIXA -->
+    <section id="view-baixa" class="view">
+      <h1 class="page-title">Pedidos para Baixa</h1>
+
+      <div class="grid-2">
+        <!-- Lista de pedidos -->
+        <div>
+          <div class="card">
+            <h2 class="card-title">Pedidos Salvos</h2>
+            <p class="card-subtitle">Selecione um pedido para atualizar a saída da cozinha e o pagamento.</p>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Nº</th>
+                  <th>Mesa</th>
+                  <th>Garçom</th>
+                  <th class="text-right">Total</th>
+                  <th>Cozinha</th>
+                  <th>Pagamento</th>
+                  <th class="text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="baixaListaBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Detalhe para baixa -->
+        <div>
+          <div class="card">
+            <h2 class="card-title">Detalhe do Pedido para Baixa</h2>
+
+            <div id="baixaDetalheVazio" class="muted">Selecione um pedido na lista ao lado para dar baixa.</div>
+
+            <div id="baixaDetalheConteudo" style="display: none">
+              <div class="muted" style="margin-bottom: 6px">Resumo</div>
+              <div style="font-size: 0.9rem; margin-bottom: 8px">
+                <div><strong>Pedido:</strong> <span id="baixaInfoNumero"></span></div>
+                <div><strong>Mesa:</strong> <span id="baixaInfoMesa"></span></div>
+                <div><strong>Garçom:</strong> <span id="baixaInfoGarcom"></span></div>
+                <div><strong>Data/Hora:</strong> <span id="baixaInfoDataHora"></span></div>
+              </div>
+
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th class="text-center">Qtde</th>
+                    <th class="text-right">Unit.</th>
+                    <th class="text-right">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody id="baixaItensBody"></tbody>
+              </table>
+
+              <div class="summary-card-total-box" style="margin-top: 10px">
+                <div class="summary-label">Total</div>
+                <div class="summary-value">R$ <span id="baixaTotal">0,00</span></div>
+              </div>
+
+              <div style="margin-top: 10px">
+                <!-- (1) ADICIONADO onchange -->
+                <label class="input-inline">
+                  <input type="checkbox" id="baixaCozinhaSaiu" onchange="marcarSaidaCozinha()" />
+                  Pedido saiu da cozinha
+                </label>
+                <!-- (3) ADICIONADO exibidor do horário -->
+                <div id="baixaCozinhaHorario" class="muted" style="margin-top:6px"></div>
+
+                <label for="baixaFormaPagamento" style="margin-top: 10px">Forma de pagamento</label>
+                <select id="baixaFormaPagamento">
+                  <option value="">Selecione...</option>
+                  <option value="Dinheiro">Dinheiro</option>
+                  <option value="Cartão">Cartão</option>
+                  <option value="PIX">PIX</option>
+                  <option value="Outro">Outro</option>
+                </select>
+
+                <label class="input-inline" style="margin-top: 10px">
+                  <input type="checkbox" id="baixaPagou" /> Pagamento concluído (pedido pago)
+                </label>
+
+                <button class="btn btn-primary" style="margin-top: 14px" onclick="confirmarBaixaPedido()"> ✔ Confirmar Baixa </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: COMPRAS / CUSTO -->
+    <section id="view-compras" class="view">
+      <div class="section-header">
+        <h1 class="section-header-title">Compras / Custo dos Itens</h1>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Cadastro de custo por item</h2>
+        <p class="card-subtitle">Informe o custo médio unitário de cada item para cálculo de lucro no dashboard.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Categoria</th>
+              <th>Preço venda</th>
+              <th>Custo unit.</th>
+              <th>Margem estimada</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="comprasBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW: DASHBOARD -->
+    <section id="view-dashboard" class="view">
+      <div class="section-header">
+        <h1 class="section-header-title">Dashboard</h1>
+        <div class="row">
+          <div class="col">
+            <label for="dashFiltroSemana">Semana</label>
+            <select id="dashFiltroSemana">
+              <option value="todas">Todas as semanas</option>
+            </select>
+          </div>
+          <div class="col">
+            <label for="dashFiltroMes">Mês</label>
+            <select id="dashFiltroMes">
+              <option value="todos">Todos os meses</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div>
+          <div class="card">
+            <h2 class="card-title">Faturamento e Pagamentos</h2>
+            <p class="card-subtitle">Baseado nos pedidos pagos do período selecionado.</p>
+            <p class="dash-metric">Faturamento total: <strong>R$ <span id="dashFaturamentoTotal">0,00</span></strong></p>
+            <p class="dash-metric">Lucro total estimado: <strong>R$ <span id="dashLucroTotal">0,00</span></strong></p>
+
+            <h3 class="card-title" style="margin-top:14px;font-size:0.95rem;">Resumo por forma de pagamento</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Forma</th>
+                  <th class="text-center">Qtd</th>
+                  <th class="text-right">Faturamento</th>
+                </tr>
+              </thead>
+              <tbody id="dashPagamentosBody"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">10 Itens mais vendidos</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="text-center">Qtd</th>
+                  <th class="text-right">Faturamento</th>
+                </tr>
+              </thead>
+              <tbody id="dashItensMaisBody"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">10 Itens menos vendidos</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="text-center">Qtd</th>
+                  <th class="text-right">Faturamento</th>
+                </tr>
+              </thead>
+              <tbody id="dashItensMenosBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2 class="card-title">Garçons</h2>
+
+            <h3 class="card-subtitle" style="margin-bottom:4px;">3 garçons com mais pedidos</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Garçom</th>
+                  <th class="text-center">Qtd</th>
+                  <th class="text-right">Faturamento</th>
+                </tr>
+              </thead>
+              <tbody id="dashGarconsMaisPedidosBody"></tbody>
+            </table>
+
+            <h3 class="card-subtitle" style="margin-top:10px;margin-bottom:4px;">3 garçons com maior faturamento</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Garçom</th>
+                  <th class="text-center">Qtd</th>
+                  <th class="text-right">Faturamento</th>
+                </tr>
+              </thead>
+              <tbody id="dashGarconsMaisFaturamentoBody"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Mesas, horário e cozinha</h2>
+            <p class="dash-metric">Tempo médio da cozinha (entrada → saída): <strong><span id="dashTempoMedio">N/A</span></strong></p>
+
+            <h3 class="card-subtitle" style="margin-top:8px;margin-bottom:4px;">Horários com maior pico</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Horário</th>
+                  <th class="text-center">Qtd pedidos</th>
+                </tr>
+              </thead>
+              <tbody id="dashPicosBody"></tbody>
+            </table>
+
+            <h3 class="card-subtitle" style="margin-top:10px;margin-bottom:4px;">5 mesas mais movimentadas</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Mesa</th>
+                  <th class="text-center">Qtd</th>
+                  <th class="text-right">Faturamento</th>
+                </tr>
+              </thead>
+              <tbody id="dashMesasBody"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Lucro por item</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="text-center">Qtd</th>
+                  <th class="text-right">Faturamento</th>
+                  <th class="text-right">Custo</th>
+                  <th class="text-right">Lucro</th>
+                </tr>
+              </thead>
+              <tbody id="dashLucroItensBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ---------- CONSTANTES STORAGE ----------
+    const STORAGE_KEYS = {
+      CARDAPIO: "cbp_cardapio",
+      GARCONS: "cbp_garcons",
+      MESAS: "cbp_mesas",
+      PEDIDOS: "cbp_pedidos",
+    };
+
+    // ---------- DADOS EM MEMÓRIA ----------
+    let cardapio = [];
+    let garcons = [];
+    let mesas = [];
+    let pedidos = [];
+    let itensPedido = [];
+    let pedidoBaixaSelecionadoId = null;
+
+    // ---------- UTIL STORAGE ----------
+    function carregarStorage() {
+      cardapio = JSON.parse(localStorage.getItem(STORAGE_KEYS.CARDAPIO) || "[]");
+      garcons = JSON.parse(localStorage.getItem(STORAGE_KEYS.GARCONS) || "[]");
+      mesas = JSON.parse(localStorage.getItem(STORAGE_KEYS.MESAS) || "[]");
+      pedidos = JSON.parse(localStorage.getItem(STORAGE_KEYS.PEDIDOS) || "[]");
+    }
+    function salvarStorage() {
+      localStorage.setItem(STORAGE_KEYS.CARDAPIO, JSON.stringify(cardapio));
+      localStorage.setItem(STORAGE_KEYS.GARCONS, JSON.stringify(garcons));
+      localStorage.setItem(STORAGE_KEYS.MESAS, JSON.stringify(mesas));
+      localStorage.setItem(STORAGE_KEYS.PEDIDOS, JSON.stringify(pedidos));
+    }
+
+    // ---------- SEED DE DADOS INICIAIS ----------
+    function seedIfEmpty() {
+      if (!cardapio.length) {
+        cardapio = [
+          { id: 1, nome: "Água Mineral", categoria: "Bebida", preco: 4.0, ativo: true },
+          { id: 2, nome: "Cerveja Brahma 350ml", categoria: "Bebida", preco: 8.0, ativo: true },
+          { id: 3, nome: "Cerveja Skol 350ml", categoria: "Bebida", preco: 7.5, ativo: true },
+          { id: 4, nome: "Refrigerante Coca-Cola", categoria: "Bebida", preco: 6.0, ativo: true },
+          { id: 5, nome: "Suco de Laranja Natural", categoria: "Bebida", preco: 12.0, ativo: true },
+          { id: 6, nome: "Caipirinha", categoria: "Drink", preco: 18.0, ativo: true },
+          { id: 7, nome: "Mojito", categoria: "Drink", preco: 20.0, ativo: true },
+          { id: 8, nome: "Piña Colada", categoria: "Drink", preco: 22.0, ativo: true },
+          { id: 9, nome: "Hambúrguer Artesanal", categoria: "Lanche", preco: 35.0, ativo: true },
+          { id: 10, nome: "Sanduíche Natural", categoria: "Lanche", preco: 18.0, ativo: true },
+        ];
+      }
+      if (!garcons.length) {
+        garcons = [
+          { id: 1, nome: "João Silva", ativo: true },
+          { id: 2, nome: "Maria Santos", ativo: true },
+          { id: 3, nome: "Pedro Costa", ativo: true },
+        ];
+      }
+      if (!mesas.length) {
+        mesas = [
+          { id: 1, numero: "Mesa 1", descricao: "Mesa próxima à entrada" },
+          { id: 2, numero: "Mesa 2", descricao: "Mesa do centro" },
+          { id: 3, numero: "Mesa 3", descricao: "Mesa do fundo" },
+          { id: 4, numero: "Mesa 4", descricao: "Mesa da varanda" },
+          { id: 5, numero: "Mesa 5", descricao: "Mesa VIP" },
+        ];
+      }
+      salvarStorage();
+    }
+
+    // Normaliza pedidos antigos para incluir campos de status/pagamento
+    function normalizarPedidos() {
+      pedidos = pedidos.map((p) => ({
+        status: "aberto",
+        cozinhaSaiu: false,
+        pagamentoStatus: "pendente",
+        pagamentoForma: "",
+        ...p,
+      }));
+      salvarStorage();
+    }
+
+    // ---------- FUNÇÕES DATA/HORA ----------
+    function parseDataHoraPtBrToDate(str) {
+      if (!str) return null;
+      const partes = str.split(" ");
+      if (partes.length < 2) return null;
+      const [data, hora] = partes;
+      const [dia, mes, ano] = data.split("/");
+      const [hh, mm] = hora.split(":");
+      const d = new Date(ano, mes - 1, dia, hh, mm);
+      if (isNaN(d.getTime())) return null;
+      return d;
+    }
+    function getDataPedido(p) {
+      if (p.pagoEm) {
+        const d = new Date(p.pagoEm);
+        if (!isNaN(d.getTime())) return d;
+      }
+      return parseDataHoraPtBrToDate(p.dataHora);
+    }
+    function getDataEntradaPedido(p) {
+      return parseDataHoraPtBrToDate(p.dataHora);
+    }
+    // ISO week
+    function getWeekNumber(d) {
+      const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const dayNum = date.getUTCDay() || 7;
+      date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+      const weekNo = Math.ceil(((date - yearStart) / 86400000 + 1) / 7);
+      return weekNo;
+    }
+
+    // ---------- NAVEGAÇÃO ENTRE VIEWS ----------
+    document.querySelectorAll(".nav-btn[data-view]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const view = btn.getAttribute("data-view");
+        document.querySelectorAll(".nav-btn[data-view]").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
+        document.getElementById("view-" + view).classList.add("active");
+
+        if (view === "pedidos") {
+          atualizarSelectsPedido();
+        } else if (view === "baixa") {
+          listarPedidosBaixa();
+        } else if (view === "compras") {
+          renderCompras();
+        } else if (view === "dashboard") {
+          atualizarDashboard();
+        }
+      });
+    });
+
+    // helper: ir diretamente para tela de baixa
+    function irParaTelaBaixa() {
+      listarPedidosBaixa();
+      const btnBaixa = document.querySelector('.nav-btn[data-view="baixa"]');
+      if (btnBaixa) btnBaixa.click();
+    }
+
+    // ---------- FUNÇÕES PEDIDO ----------
+    function gerarNumeroPedido() {
+      const proximo = pedidos.length + 1;
+      return proximo.toString();
+    }
+    function preencherCabecalhoPedido() {
+      document.getElementById("pedidoNumero").value = gerarNumeroPedido();
+      const agora = new Date();
+      const opcoes = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" };
+      document.getElementById("pedidoDataHora").value = agora.toLocaleDateString("pt-BR", opcoes);
+    }
+    function atualizarSelectsPedido() {
+      const selGarcom = document.getElementById("pedidoGarcom");
+      const selMesa = document.getElementById("pedidoMesa");
+
+      // Garçons
+      selGarcom.innerHTML = '<option value="">Selecione...</option>';
+      garcons.forEach((g) => {
+        if (!g.ativo) return;
+        const opt = document.createElement("option");
+        opt.value = g.id;
+        opt.textContent = g.nome;
+        selGarcom.appendChild(opt);
+      });
+
+      // Mesas
+      selMesa.innerHTML = '<option value="">Selecione...</option>';
+      mesas.forEach((m) => {
+        const opt = document.createElement("option");
+        opt.value = m.id;
+        opt.textContent = m.numero;
+        selMesa.appendChild(opt);
+      });
+
+      atualizarSelectItemPedido();
+    }
+    function atualizarSelectItemPedido() {
+      const busca = document.getElementById("pedidoBuscarItem").value.toLowerCase().trim();
+      const select = document.getElementById("pedidoItemSelect");
+      select.innerHTML = '<option value="">Selecione um item...</option>';
+      cardapio
+        .filter((i) => i.ativo)
+        .filter((i) => i.nome.toLowerCase().includes(busca))
+        .forEach((item) => {
+          const opt = document.createElement("option");
+          opt.value = item.id;
+          opt.textContent = item.nome + " - R$ " + item.preco.toFixed(2).replace(".", ",");
+          select.appendChild(opt);
+        });
+    }
+    function atualizarTotaisPedidoUI(total) {
+      const taxa = total * 0.1;
+      const comTaxa = total + taxa;
+      document.getElementById("pedidoTotalSemTaxa").textContent = total.toFixed(2).replace(".", ",");
+      document.getElementById("pedidoTaxaGarcom").textContent = taxa.toFixed(2).replace(".", ",");
+      document.getElementById("pedidoTotalComTaxa").textContent = comTaxa.toFixed(2).replace(".", ",");
+    }
+    function atualizarTabelaItensPedido() {
+      const tbody = document.getElementById("pedidoItensBody");
+      tbody.innerHTML = "";
+      if (!itensPedido.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="5" class="text-center muted">Nenhum item adicionado ao pedido.</td>';
+        tbody.appendChild(tr);
+        atualizarTotaisPedidoUI(0);
+        return;
+      }
+      let total = 0;
+      itensPedido.forEach((it) => {
+        const subtotal = it.preco * it.quantidade;
+        total += subtotal;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${it.nome}</td>
+          <td class="text-center">${it.quantidade}</td>
+          <td class="text-right">R$ ${it.preco.toFixed(2).replace(".", ",")}</td>
+          <td class="text-right">R$ ${subtotal.toFixed(2).replace(".", ",")}</td>
+          <td class="text-center">
+            <button class="btn-icon" onclick="removerItemPedido(${it.idItem})">✕</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      atualizarTotaisPedidoUI(total);
+    }
+    function adicionarItemPedido() {
+      const idItem = parseInt(document.getElementById("pedidoItemSelect").value, 10);
+      const qtd = parseInt(document.getElementById("pedidoQuantidade").value, 10);
+      if (!idItem || !qtd || qtd <= 0) {
+        alert("Selecione um item e informe uma quantidade válida.");
+        return;
+      }
+      const item = cardapio.find((i) => i.id === idItem);
+      if (!item) {
+        alert("Item não encontrado no cardápio.");
+        return;
+      }
+      const existente = itensPedido.find((it) => it.idItem === idItem);
+      if (existente) {
+        existente.quantidade += qtd;
+      } else {
+        itensPedido.push({ idItem, nome: item.nome, preco: item.preco, quantidade: qtd });
+      }
+      document.getElementById("pedidoQuantidade").value = 1;
+      document.getElementById("pedidoItemSelect").value = "";
+      atualizarTabelaItensPedido();
+    }
+    function removerItemPedido(idItem) {
+      itensPedido = itensPedido.filter((it) => it.idItem !== idItem);
+      atualizarTabelaItensPedido();
+    }
+    function montarPedidoAtual() {
+      const garcomId = parseInt(document.getElementById("pedidoGarcom").value, 10);
+      const mesaId = parseInt(document.getElementById("pedidoMesa").value, 10);
+      const numero = document.getElementById("pedidoNumero").value;
+      const dataHora = document.getElementById("pedidoDataHora").value;
+
+      if (!garcomId || !mesaId) {
+        alert("Selecione o garçom e a mesa.");
+        return null;
+      }
+      if (!itensPedido.length) {
+        alert("Adicione pelo menos um item ao pedido.");
+        return null;
+      }
+      let total = 0;
+      itensPedido.forEach((i) => (total += i.preco * i.quantidade));
+      return {
+        id: pedidos.length + 1,
+        numero, garcomId, mesaId, dataHora,
+        itens: JSON.parse(JSON.stringify(itensPedido)),
+        total,
+        status: "aberto",
+        cozinhaSaiu: false,
+        pagamentoStatus: "pendente",
+        pagamentoForma: "",
+      };
+    }
+    function salvarPedido() {
+      const pedido = montarPedidoAtual();
+      if (!pedido) return;
+
+      pedidos.push(pedido);
+      salvarStorage();
+      alert("Pedido salvo com sucesso!");
+
+      // prepara novo pedido
+      itensPedido = [];
+      atualizarTabelaItensPedido();
+      preencherCabecalhoPedido();
+      document.getElementById("pedidoGarcom").value = "";
+      document.getElementById("pedidoMesa").value = "";
+      document.getElementById("pedidoBuscarItem").value = "";
+      atualizarSelectItemPedido();
+
+      // vai para tela de baixa
+      irParaTelaBaixa();
+    }
+
+    // IMPRESSÃO SOMENTE DA COMANDA (e salvar se ainda não salvo)
+    function imprimirComanda() {
+      const numeroAtual = document.getElementById("pedidoNumero").value;
+      let pedido = pedidos.find((p) => p.numero === numeroAtual);
+
+      // se ainda não está salvo, monta e salva
+      if (!pedido) {
+        pedido = montarPedidoAtual();
+        if (!pedido) return;
+        pedidos.push(pedido);
+        salvarStorage();
+      }
+
+      const garcom = garcons.find((g) => g.id === pedido.garcomId);
+      const mesa = mesas.find((m) => m.id === pedido.mesaId);
+      const totalSemTaxa = pedido.total || 0;
+      const taxa = totalSemTaxa * 0.1;
+      const totalComTaxa = totalSemTaxa + taxa;
+
+      const comandaHTML = `<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comanda ${pedido.numero}</title>
+  <style>
+    body { font-family: "Courier New", monospace; font-size: 12px; margin: 0; padding: 4px 8px;}
+    .center { text-align: center; }
+    .linha { border-top: 1px dashed #000; margin: 4px 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 4px;}
+    td { padding: 2px 0; }
+    .right { text-align: right; }
+    .bold { font-weight: bold; }
+    img { max-width: 110px; }
+  </style>
+</head>
+<body>
+  <div class="center">
+    <img src="${location.origin + "/logo-cachoeira.svg"}" alt="Cachoeira" />
+    <div class="bold">Cachoeira Bar e Petiscaria</div>
+    <div>${pedido.dataHora}</div>
+  </div>
+  <div class="linha"></div>
+  <div>Pedido: <span class="bold">${pedido.numero}</span></div>
+  <div>Mesa: <span class="bold">${mesa ? mesa.numero : ""}</span></div>
+  <div>Garçom: <span class="bold">${garcom ? garcom.nome : ""}</span></div>
+  <div class="linha"></div>
+  <table>
+    <tbody>
+      ${pedido.itens
+        .map(
+          (i) => `
+          <tr>
+            <td>${i.quantidade}x ${i.nome}</td>
+            <td class="right">R$ ${(i.preco * i.quantidade).toFixed(2).replace(".", ",")}</td>
+          </tr>`
+        )
+        .join("")}
+    </tbody>
+  </table>
+  <div class="linha"></div>
+  <div class="right">Total sem taxa: R$ ${totalSemTaxa.toFixed(2).replace(".", ",")}</div>
+  <div class="right">Taxa garçom (10%): R$ ${taxa.toFixed(2).replace(".", ",")}</div>
+  <div class="right bold">Total com taxa: R$ ${totalComTaxa.toFixed(2).replace(".", ",")}</div>
+  <div class="linha"></div>
+  <div class="center">Obrigado pela preferência!</div>
+</body>
+</html>`;
+
+      const comandaWindow = window.open("", "_blank", "width=500,height=600");
+      comandaWindow.document.open();
+      comandaWindow.document.write(comandaHTML);
+      comandaWindow.document.close();
+      comandaWindow.onload = function () {
+        comandaWindow.print();
+        comandaWindow.close();
+      };
+
+      // prepara novo pedido
+      itensPedido = [];
+      atualizarTabelaItensPedido();
+      preencherCabecalhoPedido();
+      document.getElementById("pedidoGarcom").value = "";
+      document.getElementById("pedidoMesa").value = "";
+      document.getElementById("pedidoBuscarItem").value = "";
+      atualizarSelectItemPedido();
+
+      // vai para tela de baixa
+      irParaTelaBaixa();
+    }
+
+    // ---------- CARDÁPIO ----------
+    function novoItemCardapio() {
+      const nome = prompt("Nome do item:");
+      if (!nome) return;
+      const categoria = prompt("Categoria (ex: Bebida, Drink, Lanche):") || "";
+      const precoStr = prompt("Preço (use ponto para centavos, ex: 12.5):");
+      const preco = parseFloat(precoStr.replace(",", "."));
+      if (isNaN(preco)) {
+        alert("Preço inválido.");
+        return;
+      }
+      const novoId = cardapio.length ? Math.max(...cardapio.map((i) => i.id)) + 1 : 1;
+      cardapio.push({ id: novoId, nome, categoria, preco, ativo: true });
+      salvarStorage();
+      renderCardapio();
+      atualizarSelectItemPedido();
+      alert("Item cadastrado com sucesso!");
+    }
+    function editarItemCardapio(id) {
+      const item = cardapio.find((i) => i.id === id);
+      if (!item) return;
+      const nome = prompt("Nome do item:", item.nome);
+      if (!nome) return;
+      const categoria = prompt("Categoria:", item.categoria || "") || "";
+      const precoStr = prompt("Preço:", item.preco != null ? String(item.preco).replace(".", ",") : "");
+      const preco = parseFloat(precoStr.replace(",", "."));
+      if (isNaN(preco)) {
+        alert("Preço inválido.");
+        return;
+      }
+      item.nome = nome;
+      item.categoria = categoria;
+      item.preco = preco;
+      salvarStorage();
+      renderCardapio();
+      atualizarSelectItemPedido();
+    }
+    function alternarStatusItemCardapio(id) {
+      const item = cardapio.find((i) => i.id === id);
+      if (!item) return;
+      item.ativo = !item.ativo;
+      salvarStorage();
+      renderCardapio();
+      atualizarSelectItemPedido();
+    }
+    function renderCardapio() {
+      const tbody = document.getElementById("cardapioBody");
+      tbody.innerHTML = "";
+
+      const busca = document.getElementById("cardapioBusca").value.toLowerCase().trim();
+      const categoriaFiltro = document.getElementById("cardapioCategoriaFiltro").value;
+
+      let categorias = new Set();
+      const filtrados = cardapio.filter((item) => {
+        categorias.add(item.categoria);
+        const matchNome = item.nome.toLowerCase().includes(busca);
+        const matchCat = !categoriaFiltro || item.categoria === categoriaFiltro;
+        return matchNome && matchCat;
+      });
+
+      if (!filtrados.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="5" class="text-center muted">Nenhum item encontrado.</td>';
+        tbody.appendChild(tr);
+      } else {
+        filtrados.forEach((item) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${item.nome}</td>
+            <td>${item.categoria || "-"}</td>
+            <td>R$ ${item.preco.toFixed(2).replace(".", ",")}</td>
+            <td><span class="chip-status ${item.ativo ? "" : "inactive"}">${item.ativo ? "Ativo" : "Inativo"}</span></td>
+            <td class="text-center">
+              <button class="btn-icon" title="Editar" onclick="editarItemCardapio(${item.id})">✏️</button>
+              <button class="btn-icon" title="Ativar/Inativar" onclick="alternarStatusItemCardapio(${item.id})">⏻</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      document.getElementById("cardapioCountBadge").textContent = `${cardapio.length} itens`;
+
+      const selCat = document.getElementById("cardapioCategoriaFiltro");
+      const categoriaSelecionada = selCat.value;
+      selCat.innerHTML = '<option value="">Todas as Categorias</option>';
+      Array.from(categorias)
+        .filter((c) => c)
+        .sort()
+        .forEach((cat) => {
+          const opt = document.createElement("option");
+          opt.value = cat;
+          opt.textContent = cat;
+          selCat.appendChild(opt);
+        });
+      if (categoriaSelecionada && Array.from(selCat.options).some((o) => o.value === categoriaSelecionada)) {
+        selCat.value = categoriaSelecionada;
+      }
+    }
+
+    // ---------- GARÇONS ----------
+    function novoGarcom() {
+      const nome = prompt("Nome do garçom:");
+      if (!nome) return;
+      const novoId = garcons.length ? Math.max(...garcons.map((g) => g.id)) + 1 : 1;
+      garcons.push({ id: novoId, nome, ativo: true });
+      salvarStorage();
+      renderGarcons();
+      atualizarSelectsPedido();
+    }
+    function alternarStatusGarcom(id) {
+      const g = garcons.find((g) => g.id === id);
+      if (!g) return;
+      g.ativo = !g.ativo;
+      salvarStorage();
+      renderGarcons();
+      atualizarSelectsPedido();
+    }
+    function renderGarcons() {
+      const tbody = document.getElementById("garconsBody");
+      tbody.innerHTML = "";
+      if (!garcons.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="3" class="text-center muted">Nenhum garçom cadastrado.</td>';
+        tbody.appendChild(tr);
+        return;
+      }
+      garcons.forEach((g) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${g.nome}</td>
+          <td><span class="chip-status ${g.ativo ? "" : "inactive"}">${g.ativo ? "Ativo" : "Inativo"}</span></td>
+          <td class="text-center">
+            <button class="btn-icon" onclick="alternarStatusGarcom(${g.id})" title="Ativar/Inativar">⏻</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ---------- MESAS ----------
+    function novaMesa() {
+      const numero = prompt("Identificação da mesa (ex: Mesa 6):");
+      if (!numero) return;
+      const descricao = prompt("Descrição (opcional):") || "";
+      const novoId = mesas.length ? Math.max(...mesas.map((m) => m.id)) + 1 : 1;
+      mesas.push({ id: novoId, numero, descricao });
+      salvarStorage();
+      renderMesas();
+      atualizarSelectsPedido();
+    }
+    function editarMesa(id) {
+      const mesa = mesas.find((m) => m.id === id);
+      if (!mesa) return;
+      const numero = prompt("Número:", mesa.numero);
+      if (!numero) return;
+      const descricao = prompt("Descrição:", mesa.descricao || "") || "";
+      mesa.numero = numero;
+      mesa.descricao = descricao;
+      salvarStorage();
+      renderMesas();
+      atualizarSelectsPedido();
+    }
+    function renderMesas() {
+      const tbody = document.getElementById("mesasBody");
+      tbody.innerHTML = "";
+      if (!mesas.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="3" class="text-center muted">Nenhuma mesa cadastrada.</td>';
+        tbody.appendChild(tr);
+        return;
+      }
+      mesas.forEach((mesa) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${mesa.numero}</td>
+          <td>${mesa.descricao || "-"}</td>
+          <td class="text-center"><button class="btn-icon" onclick="editarMesa(${mesa.id})" title="Editar">✏️</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ---------- BAIXA DE PEDIDOS ----------
+    function listarPedidosBaixa() {
+      const tbody = document.getElementById("baixaListaBody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      if (!pedidos.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="7" class="text-center muted">Nenhum pedido salvo.</td>';
+        tbody.appendChild(tr);
+        atualizarDetalheBaixa();
+        return;
+      }
+
+      const listaOrdenada = [...pedidos].sort((a, b) => b.id - a.id);
+      listaOrdenada.forEach((p) => {
+        const garcom = garcons.find((g) => g.id === p.garcomId);
+        const mesa = mesas.find((m) => m.id === p.mesaId);
+        const statusCozinha = p.cozinhaSaiu ? "Saiu" : "Na cozinha";
+        const statusPg = p.pagamentoStatus === "pago" ? "Pago" : "Pendente";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${p.numero}</td>
+          <td>${mesa ? mesa.numero : "-"}</td>
+          <td>${garcom ? garcom.nome : "-"}</td>
+          <td class="text-right">R$ ${p.total.toFixed(2).replace(".", ",")}</td>
+          <td><span class="chip-status ${p.cozinhaSaiu ? "" : "inactive"}">${statusCozinha}</span></td>
+          <td><span class="chip-status ${p.pagamentoStatus === "pago" ? "" : "inactive"}">${statusPg}</span></td>
+          <td class="text-center"><button class="btn-icon" onclick="selecionarPedidoBaixa(${p.id})">👁</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      atualizarDetalheBaixa();
+    }
+    function selecionarPedidoBaixa(id) {
+      pedidoBaixaSelecionadoId = id;
+      atualizarDetalheBaixa();
+    }
+    function atualizarDetalheBaixa() {
+      const vazio = document.getElementById("baixaDetalheVazio");
+      const conteudo = document.getElementById("baixaDetalheConteudo");
+      if (!vazio || !conteudo) return;
+
+      if (!pedidoBaixaSelecionadoId) {
+        vazio.style.display = "block";
+        conteudo.style.display = "none";
+        return;
+      }
+      const p = pedidos.find((x) => x.id === pedidoBaixaSelecionadoId);
+      if (!p) {
+        pedidoBaixaSelecionadoId = null;
+        vazio.style.display = "block";
+        conteudo.style.display = "none";
+        return;
+      }
+
+      const garcom = garcons.find((g) => g.id === p.garcomId);
+      const mesa = mesas.find((m) => m.id === p.mesaId);
+
+      vazio.style.display = "none";
+      conteudo.style.display = "block";
+
+      document.getElementById("baixaInfoNumero").textContent = p.numero;
+      document.getElementById("baixaInfoMesa").textContent = mesa ? mesa.numero : "-";
+      document.getElementById("baixaInfoGarcom").textContent = garcom ? garcom.nome : "-";
+      document.getElementById("baixaInfoDataHora").textContent = p.dataHora;
+      document.getElementById("baixaTotal").textContent = p.total.toFixed(2).replace(".", ",");
+
+      const tbody = document.getElementById("baixaItensBody");
+      tbody.innerHTML = "";
+      p.itens.forEach((i) => {
+        const subtotal = i.preco * i.quantidade;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i.nome}</td>
+          <td class="text-center">${i.quantidade}</td>
+          <td class="text-right">R$ ${i.preco.toFixed(2).replace(".", ",")}</td>
+          <td class="text-right">R$ ${subtotal.toFixed(2).replace(".", ",")}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // checkbox + forma de pagamento + pago
+      document.getElementById("baixaCozinhaSaiu").checked = !!p.cozinhaSaiu;
+      document.getElementById("baixaFormaPagamento").value = p.pagamentoForma || "";
+      document.getElementById("baixaPagou").checked = p.pagamentoStatus === "pago";
+
+      // (3) ATUALIZA O TEXTO DO HORÁRIO DE SAÍDA
+      const saidaInfo = document.getElementById("baixaCozinhaHorario");
+      if (saidaInfo) {
+        if (p.cozinhaSaiuEm) {
+          const d = new Date(p.cozinhaSaiuEm);
+          if (!isNaN(d.getTime())) {
+            const hh = String(d.getHours()).padStart(2,'0');
+            const mm = String(d.getMinutes()).padStart(2,'0');
+            const dd = String(d.getDate()).padStart(2,'0');
+            const mo = String(d.getMonth()+1).padStart(2,'0');
+            const yyyy = d.getFullYear();
+            saidaInfo.textContent = `Saiu da cozinha em ${dd}/${mo}/${yyyy} às ${hh}:${mm}`;
+          } else {
+            saidaInfo.textContent = "";
+          }
+        } else {
+          saidaInfo.textContent = "";
+        }
+      }
+    }
+
+    // (2) NOVA FUNÇÃO: salva imediatamente ao marcar/desmarcar
+    function marcarSaidaCozinha() {
+      if (!pedidoBaixaSelecionadoId) return;
+      const p = pedidos.find((x) => x.id === pedidoBaixaSelecionadoId);
+      if (!p) return;
+
+      const marcado = document.getElementById("baixaCozinhaSaiu").checked;
+      const antes = !!p.cozinhaSaiu;
+
+      p.cozinhaSaiu = !!marcado;
+      if (marcado && !p.cozinhaSaiuEm) {
+        p.cozinhaSaiuEm = new Date().toISOString();
+      }
+      // (se desejar limpar quando desmarcar, descomente abaixo)
+      // if (!marcado) { p.cozinhaSaiuEm = null; }
+
+      salvarStorage();
+      listarPedidosBaixa();
+      selecionarPedidoBaixa(p.id);
+    }
+
+    function confirmarBaixaPedido() {
+      if (!pedidoBaixaSelecionadoId) {
+        alert("Selecione um pedido para dar baixa.");
+        return;
+      }
+      const p = pedidos.find((x) => x.id === pedidoBaixaSelecionadoId);
+      if (!p) return;
+
+      const cozinhaSaiuAntes = !!p.cozinhaSaiu;
+      const cozinhaSaiu = document.getElementById("baixaCozinhaSaiu").checked;
+      const forma = document.getElementById("baixaFormaPagamento").value;
+      const pagou = document.getElementById("baixaPagou").checked;
+
+      p.cozinhaSaiu = cozinhaSaiu;
+      if (cozinhaSaiu && !cozinhaSaiuAntes && !p.cozinhaSaiuEm) {
+        p.cozinhaSaiuEm = new Date().toISOString();
+      }
+
+      p.pagamentoForma = forma;
+      p.pagamentoStatus = pagou ? "pago" : "pendente";
+      if (pagou) {
+        p.status = "fechado";
+        if (!p.pagoEm) p.pagoEm = new Date().toISOString();
+      }
+
+      salvarStorage();
+      listarPedidosBaixa();
+      alert("Baixa do pedido atualizada com sucesso!");
+    }
+
+    // ---------- COMPRAS / CUSTO ----------
+    function registrarCustoItem(id) {
+      const item = cardapio.find((i) => i.id === id);
+      if (!item) return;
+      const atual = item.custo != null ? String(item.custo).replace(".", ",") : "";
+      const entrada = prompt("Informe o custo unitário (ex: 4,50):", atual);
+      if (entrada === null) return;
+      const valor = parseFloat(entrada.replace(",", "."));
+      if (isNaN(valor)) {
+        alert("Custo inválido.");
+        return;
+      }
+      item.custo = valor;
+      salvarStorage();
+      renderCompras();
+    }
+    function renderCompras() {
+      const tbody = document.getElementById("comprasBody");
+      tbody.innerHTML = "";
+      if (!cardapio.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="6" class="text-center muted">Nenhum item de cardápio cadastrado.</td>';
+        tbody.appendChild(tr);
+        return;
+      }
+      cardapio.forEach((item) => {
+        const custo = item.custo != null ? item.custo : null;
+        let margemStr = "-";
+        if (custo != null && item.preco > 0) {
+          const margem = ((item.preco - custo) / item.preco) * 100;
+          margemStr = margem.toFixed(1) + "%";
+        }
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.nome}</td>
+          <td>${item.categoria || "-"}</td>
+          <td>R$ ${item.preco.toFixed(2).replace(".", ",")}</td>
+          <td>${custo != null ? "R$ " + custo.toFixed(2).replace(".", ",") : "-"}</td>
+          <td>${margemStr}</td>
+          <td class="text-center">
+            <button class="btn-icon" onclick="registrarCustoItem(${item.id})" title="Registrar/Editar custo">💰</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ---------- DASHBOARD ----------
+    function atualizarDashboard() {
+      const faturamentoEl = document.getElementById("dashFaturamentoTotal");
+      const lucroTotalEl = document.getElementById("dashLucroTotal");
+      const pagos = pedidos.filter((p) => p.pagamentoStatus === "pago");
+
+      const selSemana = document.getElementById("dashFiltroSemana");
+      const selMes = document.getElementById("dashFiltroMes");
+
+      const pagamentosBody = document.getElementById("dashPagamentosBody");
+      const itensMaisBody = document.getElementById("dashItensMaisBody");
+      const itensMenosBody = document.getElementById("dashItensMenosBody");
+      const garconsMaisPedBody = document.getElementById("dashGarconsMaisPedidosBody");
+      const garconsMaisFatBody = document.getElementById("dashGarconsMaisFaturamentoBody");
+      const picosBody = document.getElementById("dashPicosBody");
+      const mesasBody = document.getElementById("dashMesasBody");
+      const tempoMedioEl = document.getElementById("dashTempoMedio");
+      const lucroItensBody = document.getElementById("dashLucroItensBody");
+
+      pagamentosBody.innerHTML =
+        itensMaisBody.innerHTML =
+        itensMenosBody.innerHTML =
+        garconsMaisPedBody.innerHTML =
+        garconsMaisFatBody.innerHTML =
+        picosBody.innerHTML =
+        mesasBody.innerHTML =
+        lucroItensBody.innerHTML =
+          "";
+
+      // se não há pagos
+      if (!pagos.length) {
+        faturamentoEl.textContent = "0,00";
+        lucroTotalEl.textContent = "0,00";
+        tempoMedioEl.textContent = "N/A";
+        const linhaVazia = '<tr><td colspan="5" class="text-center muted">Nenhum pedido pago no período.</td></tr>';
+        pagamentosBody.innerHTML = linhaVazia.replace('colspan="5"', 'colspan="3"');
+        itensMaisBody.innerHTML = linhaVazia.replace('colspan="5"', 'colspan="3"');
+        itensMenosBody.innerHTML = linhaVazia.replace('colspan="5"', 'colspan="3"');
+        garconsMaisPedBody.innerHTML = linhaVazia.replace('colspan="5"', 'colspan="3"');
+        garconsMaisFatBody.innerHTML = linhaVazia.replace('colspan="5"', 'colspan="3"');
+        picosBody.innerHTML = linhaVazia.replace('colspan="5"', 'colspan="2"');
+        mesasBody.innerHTML = linhaVazia.replace('colspan="5"', 'colspan="3"');
+        lucroItensBody.innerHTML = linhaVazia.replace('colspan="5"', 'colspan="5"');
+
+        // limpar filtros
+        selSemana.innerHTML = '<option value="todas">Todas as semanas</option>';
+        selMes.innerHTML = '<option value="todos">Todos os meses</option>';
+        return;
+      }
+
+      // montar estrutura com datas / semana / mês
+      const semanasSet = new Set();
+      const mesesSet = new Set();
+      const pedidosComData = [];
+      pagos.forEach((p) => {
+        const d = getDataPedido(p);
+        if (!d) return;
+        const semana = getWeekNumber(d);
+        const mes = d.getMonth() + 1;
+        semanasSet.add(semana);
+        mesesSet.add(mes);
+        pedidosComData.push({ pedido: p, data: d, semana, mes });
+      });
+
+      // reconstruir selects mantendo seleção se possível
+      const selectedSemana = selSemana.value || "todas";
+      const selectedMes = selMes.value || "todos";
+
+      selSemana.innerHTML = '<option value="todas">Todas as semanas</option>';
+      Array.from(semanasSet)
+        .sort((a, b) => a - b)
+        .forEach((sem) => {
+          const opt = document.createElement("option");
+          opt.value = sem;
+          opt.textContent = "Semana " + sem;
+          selSemana.appendChild(opt);
+        });
+      if (selectedSemana !== "todas" && Array.from(semanasSet).includes(Number(selectedSemana))) {
+        selSemana.value = selectedSemana;
+      }
+
+      selMes.innerHTML = '<option value="todos">Todos os meses</option>';
+      const nomesMes = ["", "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+      Array.from(mesesSet)
+        .sort((a, b) => a - b)
+        .forEach((m) => {
+          const opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = `${String(m).padStart(2, "0")} - ${nomesMes[m]}`;
+          selMes.appendChild(opt);
+        });
+      if (selectedMes !== "todos" && Array.from(mesesSet).includes(Number(selectedMes))) {
+        selMes.value = selectedMes;
+      }
+
+      // aplicar filtros
+      let filtrados = pedidosComData;
+      if (selSemana.value !== "todas") {
+        const semSel = Number(selSemana.value);
+        filtrados = filtrados.filter((x) => x.semana === semSel);
+      }
+      if (selMes.value !== "todos") {
+        const mesSel = Number(selMes.value);
+        filtrados = filtrados.filter((x) => x.mes === mesSel);
+      }
+      const pedidosFiltrados = filtrados.map((x) => x.pedido);
+      const datasFiltradas = filtrados.map((x) => x.data);
+
+      if (!pedidosFiltrados.length) {
+        faturamentoEl.textContent = "0,00";
+        lucroTotalEl.textContent = "0,00";
+        tempoMedioEl.textContent = "N/A";
+        const msg = '<tr><td colspan="5" class="text-center muted">Nenhum pedido pago no período selecionado.</td></tr>';
+        pagamentosBody.innerHTML = msg.replace('colspan="5"', 'colspan="3"');
+        itensMaisBody.innerHTML = msg.replace('colspan="5"', 'colspan="3"');
+        itensMenosBody.innerHTML = msg.replace('colspan="5"', 'colspan="3"');
+        garconsMaisPedBody.innerHTML = msg.replace('colspan="5"', 'colspan="3"');
+        garconsMaisFatBody.innerHTML = msg.replace('colspan="5"', 'colspan="3"');
+        picosBody.innerHTML = msg.replace('colspan="5"', 'colspan="2"');
+        mesasBody.innerHTML = msg.replace('colspan="5"', 'colspan="3"');
+        lucroItensBody.innerHTML = msg.replace('colspan="5"', 'colspan="5"');
+        return;
+      }
+
+      // Faturamento total
+      let faturamentoTotal = 0;
+      pedidosFiltrados.forEach((p) => (faturamentoTotal += p.total || 0));
+      faturamentoEl.textContent = faturamentoTotal.toFixed(2).replace(".", ",");
+
+      // Agrupamento por forma de pagamento
+      const porPagamento = {};
+      pedidosFiltrados.forEach((p) => {
+        const forma = p.pagamentoForma || "Não informado";
+        if (!porPagamento[forma]) porPagamento[forma] = { qtd: 0, total: 0 };
+        porPagamento[forma].qtd += 1;
+        porPagamento[forma].total += p.total || 0;
+      });
+      Object.entries(porPagamento).forEach(([forma, info]) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${forma}</td>
+          <td class="text-center">${info.qtd}</td>
+          <td class="text-right">R$ ${info.total.toFixed(2).replace(".", ",")}</td>
+        `;
+        pagamentosBody.appendChild(tr);
+      });
+
+      // Agrupamento por item
+      const porItem = {};
+      pedidosFiltrados.forEach((p) => {
+        (p.itens || []).forEach((i) => {
+          if (!porItem[i.idItem]) {
+            porItem[i.idItem] = { nome: i.nome, qtd: 0, faturamento: 0 };
+          }
+          porItem[i.idItem].qtd += i.quantidade;
+          porItem[i.idItem].faturamento += i.preco * i.quantidade;
+        });
+      });
+      const itensArray = Object.entries(porItem).map(([id, info]) => ({ id: Number(id), ...info }));
+
+      // 10 mais vendidos
+      itensArray
+        .slice()
+        .sort((a, b) => b.qtd - a.qtd)
+        .slice(0, 10)
+        .forEach((it) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${it.nome}</td>
+            <td class="text-center">${it.qtd}</td>
+            <td class="text-right">R$ ${it.faturamento.toFixed(2).replace(".", ",")}</td>
+          `;
+          itensMaisBody.appendChild(tr);
+        });
+
+      // 10 menos vendidos (somente quem teve venda)
+      itensArray
+        .slice()
+        .filter((i) => i.qtd > 0)
+        .sort((a, b) => a.qtd - b.qtd)
+        .slice(0, 10)
+        .forEach((it) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${it.nome}</td>
+            <td class="text-center">${it.qtd}</td>
+            <td class="text-right">R$ ${it.faturamento.toFixed(2).replace(".", ",")}</td>
+          `;
+          itensMenosBody.appendChild(tr);
+        });
+
+      // Agrupamento por garçom
+      const porGarcom = {};
+      pedidosFiltrados.forEach((p) => {
+        const g = garcons.find((gg) => gg.id === p.garcomId);
+        const nome = g ? g.nome : "Garçom #" + p.garcomId;
+        if (!porGarcom[p.garcomId]) {
+          porGarcom[p.garcomId] = { nome, qtd: 0, faturamento: 0 };
+        }
+        porGarcom[p.garcomId].qtd += 1;
+        porGarcom[p.garcomId].faturamento += p.total || 0;
+      });
+      const garconsArray = Object.values(porGarcom);
+
+      // 3 mais pedidos
+      garconsArray
+        .slice()
+        .sort((a, b) => b.qtd - a.qtd)
+        .slice(0, 3)
+        .forEach((g) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${g.nome}</td>
+            <td class="text-center">${g.qtd}</td>
+            <td class="text-right">R$ ${g.faturamento.toFixed(2).replace(".", ",")}</td>
+          `;
+          garconsMaisPedBody.appendChild(tr);
+        });
+
+      // 3 mais faturamento
+      garconsArray
+        .slice()
+        .sort((a, b) => b.faturamento - a.faturamento)
+        .slice(0, 3)
+        .forEach((g) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${g.nome}</td>
+            <td class="text-center">${g.qtd}</td>
+            <td class="text-right">R$ ${g.faturamento.toFixed(2).replace(".", ",")}</td>
+          `;
+          garconsMaisFatBody.appendChild(tr);
+        });
+
+      // Horário de pico (por hora)
+      const porHora = {};
+      datasFiltradas.forEach((d) => {
+        const h = d.getHours();
+        if (!porHora[h]) porHora[h] = 0;
+        porHora[h] += 1;
+      });
+      const horasArray = Object.entries(porHora)
+        .map(([h, qtd]) => ({ hora: Number(h), qtd }))
+        .sort((a, b) => b.qtd - a.qtd)
+        .slice(0, 5);
+      horasArray.forEach((h) => {
+        const tr = document.createElement("tr");
+        const horaStr = String(h.hora).padStart(2, "0") + ":00";
+        tr.innerHTML = `
+          <td>${horaStr}</td>
+          <td class="text-center">${h.qtd}</td>
+        `;
+        picosBody.appendChild(tr);
+      });
+
+      // Mesas mais movimentadas
+      const porMesa = {};
+      pedidosFiltrados.forEach((p) => {
+        if (!p.mesaId) return;
+        const m = mesas.find((mm) => mm.id === p.mesaId);
+        const nome = m ? m.numero : "Mesa #" + p.mesaId;
+        if (!porMesa[p.mesaId]) {
+          porMesa[p.mesaId] = { nome, qtd: 0, faturamento: 0 };
+        }
+        porMesa[p.mesaId].qtd += 1;
+        porMesa[p.mesaId].faturamento += p.total || 0;
+      });
+      Object.values(porMesa)
+        .sort((a, b) => b.qtd - a.qtd)
+        .slice(0, 5)
+        .forEach((m) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${m.nome}</td>
+            <td class="text-center">${m.qtd}</td>
+            <td class="text-right">R$ ${m.faturamento.toFixed(2).replace(".", ",")}</td>
+          `;
+          mesasBody.appendChild(tr);
+        });
+
+      // Tempo médio entrada -> saída da cozinha
+      let somaMinutos = 0;
+      let contTempo = 0;
+      pedidosFiltrados.forEach((p) => {
+        if (!p.cozinhaSaiuEm) return;
+        const dEntrada = getDataEntradaPedido(p);
+        const dSaida = new Date(p.cozinhaSaiuEm);
+        if (!dEntrada || isNaN(dSaida.getTime())) return;
+        const diffMin = (dSaida - dEntrada) / 60000;
+        if (diffMin >= 0) {
+          somaMinutos += diffMin;
+          contTempo += 1;
+        }
+      });
+      if (!contTempo) {
+        tempoMedioEl.textContent = "N/A";
+      } else {
+        const media = somaMinutos / contTempo;
+        tempoMedioEl.textContent = media.toFixed(1) + " min";
+      }
+
+      // Lucro por item
+      let lucroTotal = 0;
+      itensArray.forEach((it) => {
+        const card = cardapio.find((c) => c.id === it.id);
+        const custoUnit = card && card.custo != null ? card.custo : 0;
+        const custoTotal = custoUnit * it.qtd;
+        const lucro = it.faturamento - custoTotal;
+        lucroTotal += lucro;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${it.nome}</td>
+          <td class="text-center">${it.qtd}</td>
+          <td class="text-right">R$ ${it.faturamento.toFixed(2).replace(".", ",")}</td>
+          <td class="text-right">R$ ${custoTotal.toFixed(2).replace(".", ",")}</td>
+          <td class="text-right">R$ ${lucro.toFixed(2).replace(".", ",")}</td>
+        `;
+        lucroItensBody.appendChild(tr);
+      });
+      lucroTotalEl.textContent = lucroTotal.toFixed(2).replace(".", ",");
+    }
+
+    // ---------- BOTÃO TELA DE ESPERA ----------
+    function configurarBotaoTelaEspera() {
+      const btn = document.getElementById("abrirTelaEsperaBtn");
+      if (!btn) return;
+      btn.addEventListener("click", () => {
+        const janela = window.open("tela-espera.html", "_blank", "width=1200,height=800");
+        if (!janela) {
+          alert("Não foi possível abrir a tela. Verifique se o navegador está bloqueando pop-ups.");
+        } else {
+          janela.focus();
+        }
+      });
+    }
+
+    // ---------- INICIALIZAÇÃO ----------
+    function init() {
+      carregarStorage();
+      seedIfEmpty();
+      carregarStorage();
+      normalizarPedidos();
+
+      preencherCabecalhoPedido();
+      atualizarSelectsPedido();
+      atualizarTabelaItensPedido();
+      renderCardapio();
+      renderGarcons();
+      renderMesas();
+      listarPedidosBaixa();
+      renderCompras();
+      configurarBotaoTelaEspera();
+
+      const selSemana = document.getElementById("dashFiltroSemana");
+      const selMes = document.getElementById("dashFiltroMes");
+      if (selSemana) selSemana.addEventListener("change", atualizarDashboard);
+      if (selMes) selMes.addEventListener("change", atualizarDashboard);
+    }
+    init();
+  </script>
+</body>
+</html>

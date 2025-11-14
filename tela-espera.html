@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cachoeira Bar - Tela de Espera</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --verde: #137b41;
+      --verde-escuro: #0c5a2e;
+      --amarelo: #ffd54f;
+      --preto: #0b1120;
+      --cinza: #111827;
+      --cinza-claro: #1f2937;
+      --texto: #e5e7eb;
+      --texto-suave: #9ca3af;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #064e3b, #020617);
+      color: var(--texto);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 32px; background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+    }
+    .logo-area { display: flex; align-items: center; gap: 12px; }
+    .logo-area img { height: 56px; border-radius: 8px; object-fit: cover; }
+    .logo-text-main { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+    .logo-text-sub { font-size: 0.85rem; color: var(--texto-suave); }
+    .clock { font-size: 1.2rem; font-weight: 500; }
+    .info-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 32px 4px; font-size: 0.9rem; color: var(--texto-suave);
+    }
+    .tempo-medio-dia span { color: #bbf7d0; font-weight: 600; }
+    main { flex: 1; padding: 12px 32px 24px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+    @media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 12px 10px 18px; } }
+    .panel {
+      border-radius: 18px; padding: 16px 18px 18px;
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(6, 78, 59, 0.96));
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(55, 65, 81, 0.7);
+      display: flex; flex-direction: column; min-height: 0;
+    }
+    .panel.right { background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(24, 24, 27, 0.96)); }
+    .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .panel-title { font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .panel-title span.icon { font-size: 1.6rem; }
+    .panel-subtitle { font-size: 0.85rem; color: var(--texto-suave); }
+    .badge-count {
+      padding: 4px 12px; border-radius: 999px; background: rgba(22, 163, 74, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.5); font-size: 0.85rem; color: #bbf7d0;
+    }
+    .badge-small {
+      padding: 3px 10px; border-radius: 999px; font-size: 0.75rem;
+      background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(75, 85, 99, 0.8); color: var(--texto-suave);
+    }
+    .list { margin-top: 8px; overflow-y: auto; flex: 1; padding-right: 4px; }
+    .order-card {
+      border-radius: 14px; padding: 8px 10px 10px; margin-bottom: 8px;
+      background: radial-gradient(circle at top left, #064e3b, #020617);
+      border: 1px solid rgba(55, 65, 81, 0.9); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7);
+    }
+    .order-card.done { background: radial-gradient(circle at top left, #1e293b, #020617); }
+    .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .order-main { display: flex; align-items: baseline; gap: 10px; font-size: 1.4rem; font-weight: 700; }
+    .order-main .mesa { color: #e5e7eb; }
+    .order-main .numero { color: #fbbf24; font-size: 1.2rem; }
+    .order-extra { font-size: 0.85rem; color: var(--texto-suave); display: flex; gap: 10px; align-items: center; }
+    .order-items { margin-top: 4px; font-size: 0.86rem; color: #e5e7eb; }
+    .order-items span { opacity: 0.92; }
+    .order-footer { margin-top: 4px; display: flex; justify-content: flex-start; align-items: center; font-size: 0.8rem; color: var(--texto-suave); gap: 8px; }
+    .pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: 0.75rem; }
+    .pill.time { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(55, 65, 81, 0.9); color: #e5e7eb; }
+    .pill.duration { background: rgba(22, 163, 74, 0.2); border: 1px solid rgba(34, 197, 94, 0.6); color: #bbf7d0; }
+    .empty { text-align: center; margin-top: 18px; color: var(--texto-suave); font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-area">
+      <img src="logo-cachoeira.svg" alt="Cachoeira Bar" />
+      <div>
+        <div class="logo-text-main">CACHOEIRA BAR & PETISCARIA</div>
+        <div class="logo-text-sub">Status dos pedidos em tempo real</div>
+      </div>
+    </div>
+    <div class="clock" id="clock">--:--</div>
+  </header>
+
+  <div class="info-bar">
+    <div class="tempo-medio-dia">
+      Tempo médio hoje (entrada → saída da cozinha):
+      <span id="tempoMedioDia">N/A</span>
+    </div>
+    <div>Atualização automática a cada 5 segundos</div>
+  </div>
+
+  <main id="main-content">
+    <section class="panel" id="panel-preparo">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title"><span class="icon">🍲</span><span>Pedidos em preparo</span></div>
+          <div class="panel-subtitle">Pedidos que ainda estão sendo preparados na cozinha</div>
+        </div>
+        <div class="badge-count" id="countEmPreparo">0 em preparo</div>
+      </div>
+      <div class="list" id="listaEmPreparo"></div>
+    </section>
+
+    <section class="panel right" id="panel-prontos">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title"><span class="icon">✅</span><span>Pedidos prontos / servidos</span></div>
+          <div class="panel-subtitle">Últimos pedidos que saíram da cozinha</div>
+        </div>
+        <div class="badge-small" id="countSaidos">Últimos 8 pedidos</div>
+      </div>
+      <div class="list" id="listaSaidos"></div>
+    </section>
+  </main>
+
+  <!-- Painel resumo mesas -->
+  <section class="panel" style="margin: 16px 32px;">
+    <div class="panel-header">
+      <div class="panel-title"><span class="icon">🪑</span><span>Resumo de Mesas Disponíveis</span></div>
+    </div>
+    <div id="resumoMesas" style="font-size:0.9rem; color: var(--texto-suave);"></div>
+  </section>
+
+  <script>
+    const STORAGE_KEYS = { PEDIDOS:"cbp_pedidos", GARCONS:"cbp_garcons", MESAS:"cbp_mesas" };
+
+    function carregarStorage(){
+      const pedidos=JSON.parse(localStorage.getItem(STORAGE_KEYS.PEDIDOS)||"[]");
+      const garcons=JSON.parse(localStorage.getItem(STORAGE_KEYS.GARCONS)||"[]");
+      const mesas=JSON.parse(localStorage.getItem(STORAGE_KEYS.MESAS)||"[]");
+      return{pedidos,garcons,mesas};
+    }
+
+    // --- PARSER PT-BR ROBUSTO ---
+    function parseDataHoraPtBrToDate(str) {
+      if (!str) return null;
+      const s = String(str).replaceAll(",", "").trim();
+      const parts = s.split(/\s+/);
+      if (parts.length < 2) return null;
+      const [data, hora] = parts;
+      const [dia, mes, ano] = data.split("/");
+      const hs = hora.split(":");
+      const d = new Date(+ano, +mes-1, +dia, +(hs[0]||0), +(hs[1]||0), +(hs[2]||0));
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    function formatarHorarioRelativo(dataHoraStr) {
+      const d = parseDataHoraPtBrToDate(dataHoraStr);
+      if (!d) return "";
+      const agora = new Date();
+      const diffMin = Math.round((agora - d) / 60000);
+      if (diffMin < 1) return "agora mesmo";
+      if (diffMin === 1) return "há 1 min";
+      if (diffMin < 60) return `há ${diffMin} min`;
+      const h = Math.round(diffMin/60);
+      return h === 1 ? "há 1 hora" : `há ${h} horas`;
+    }
+
+    function calcularMinutosPedido(p, usarSaidaReal = true) {
+      const entrada = parseDataHoraPtBrToDate(p.dataHora);
+      if (!entrada) return null;
+      const fim = (usarSaidaReal && p.cozinhaSaiuEm) ? new Date(p.cozinhaSaiuEm) : new Date();
+      if (isNaN(fim.getTime())) return null;
+      const min = (fim - entrada)/60000;
+      return min >= 0 ? min : null;
+    }
+
+    function atualizarTempoMedioDia(pedidos) {
+      const hoje = new Date();
+      let soma=0, cont=0;
+      pedidos.forEach(p=>{
+        if(!p.cozinhaSaiuEm) return;
+        const e=parseDataHoraPtBrToDate(p.dataHora);
+        const s=new Date(p.cozinhaSaiuEm);
+        if(!e || isNaN(s.getTime())) return;
+        if(e.getDate()===hoje.getDate() && e.getMonth()===hoje.getMonth() && e.getFullYear()===hoje.getFullYear()){
+          const m=(s-e)/60000;
+          if(m>=0){ soma+=m; cont++; }
+        }
+      });
+      document.getElementById("tempoMedioDia").textContent = cont ? (soma/cont).toFixed(1)+" min" : "N/A";
+    }
+
+    function renderLista(pedidos, garcons, mesas, container, badge, emPreparo) {
+      container.innerHTML = "";
+      badge.textContent = emPreparo
+        ? (pedidos.length===1 ? "1 em preparo" : `${pedidos.length} em preparo`)
+        : `Últimos ${pedidos.length} pedido(s)`;
+
+      if (!pedidos.length) {
+        const div=document.createElement("div");
+        div.className="empty";
+        div.textContent = emPreparo ? "Nenhum pedido em preparo no momento." : "Nenhum pedido saiu da cozinha ainda.";
+        container.appendChild(div);
+        return;
+      }
+
+      pedidos.forEach((p)=>{
+        const garcom = garcons.find(g=>g.id===p.garcomId);
+        const mesa   = mesas.find(m=>m.id===p.mesaId);
+
+        const card = document.createElement("div");
+        card.className = "order-card" + (emPreparo ? "" : " done");
+
+        const header = document.createElement("div");
+        header.className="order-header";
+
+        const mainInfo=document.createElement("div");
+        mainInfo.className="order-main";
+        const mesaSpan=document.createElement("div");
+        mesaSpan.className="mesa";
+        mesaSpan.textContent = mesa ? mesa.numero : "Mesa";
+        const numSpan=document.createElement("div");
+        numSpan.className="numero";
+        numSpan.textContent = `#${p.numero}`;
+        mainInfo.appendChild(mesaSpan);
+        mainInfo.appendChild(numSpan);
+
+        const extra=document.createElement("div");
+        extra.className="order-extra";
+        extra.innerHTML = `<span>Garçom: <strong>${garcom?garcom.nome:"-"}</strong></span>`;
+
+        header.appendChild(mainInfo);
+        header.appendChild(extra);
+
+        const itensDiv=document.createElement("div");
+        itensDiv.className="order-items";
+        const itensResumo=(p.itens||[]).map(i=>`${i.quantidade}x ${i.nome}`).join(" · ");
+        itensDiv.innerHTML=`<span>${itensResumo}</span>`;
+
+        const footer=document.createElement("div");
+        footer.className="order-footer";
+
+        const tempoPill=document.createElement("div");
+        tempoPill.className="pill time";
+        tempoPill.textContent = formatarHorarioRelativo(p.dataHora);
+
+        const minutos=calcularMinutosPedido(p, !emPreparo);
+        const duracaoPill=document.createElement("div");
+        duracaoPill.className="pill duration";
+        duracaoPill.textContent = (emPreparo ? "Em preparo: " : "Tempo: ") + (minutos==null ? "N/A" : `${minutos.toFixed(1)} min`);
+
+        footer.appendChild(tempoPill);
+        footer.appendChild(duracaoPill);
+
+        card.appendChild(header);
+        card.appendChild(itensDiv);
+        card.appendChild(footer);
+
+        container.appendChild(card);
+      });
+    }
+
+    // Resumo de mesas disponíveis
+    function atualizarResumoMesas(pedidos, mesas){
+      if(!mesas.length){
+        document.getElementById("resumoMesas").innerHTML = "<p>Sem mesas cadastradas.</p>";
+        return;
+      }
+      const ocupadas=new Set();
+      pedidos.forEach(p=>{
+        const cond1 = p.cozinhaStatus === "Na cozinha" && p.pagamentoStatus === "Pendente";
+        const cond2 = p.cozinhaStatus === "Saiu"        && p.pagamentoStatus === "Pendente";
+        if(cond1 || cond2) ocupadas.add(p.mesaId);
+      });
+      const disponiveis=mesas.filter(m=>!ocupadas.has(m.id));
+      document.getElementById("resumoMesas").innerHTML = `
+        <p>Total de mesas: <strong>${mesas.length}</strong></p>
+        <p>Disponíveis: <strong style="color:#22c55e">${disponiveis.length}</strong> &nbsp;|&nbsp; Ocupadas: <strong style="color:#f87171">${ocupadas.size}</strong></p>
+        <p>Mesas livres: ${disponiveis.length ? disponiveis.map(m=>m.numero).join(", ") : "<em>nenhuma</em>"}</p>
+      `;
+    }
+
+    function atualizarTela(){
+      const { pedidos, garcons, mesas } = carregarStorage();
+
+      const emPreparo = pedidos.filter(p=> p.status!=="fechado" && !p.cozinhaSaiu);
+      const sairam = pedidos
+        .filter(p=> p.cozinhaSaiu)
+        .sort((a,b)=>{
+          const aIdx = a.cozinhaSaiuEm || a.dataHora || "";
+          const bIdx = b.cozinhaSaiuEm || b.dataHora || "";
+          return String(bIdx).localeCompare(String(aIdx));
+        })
+        .slice(0,8);
+
+      atualizarTempoMedioDia(pedidos);
+
+      renderLista(emPreparo, garcons, mesas,
+        document.getElementById("listaEmPreparo"),
+        document.getElementById("countEmPreparo"),
+        true
+      );
+
+      renderLista(sairam, garcons, mesas,
+        document.getElementById("listaSaidos"),
+        document.getElementById("countSaidos"),
+        false
+      );
+
+      atualizarResumoMesas(pedidos, mesas);
+    }
+
+    function atualizarRelogio(){
+      const el=document.getElementById("clock");
+      const agora=new Date();
+      el.textContent=`${String(agora.getHours()).padStart(2,"0")}:${String(agora.getMinutes()).padStart(2,"0")}`;
+    }
+
+    function init(){
+      atualizarRelogio(); atualizarTela();
+      setInterval(atualizarRelogio,1000);
+      setInterval(atualizarTela,5000);
+    }
+    init();
+  </script>
+</body>
+</html>
