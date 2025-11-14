@@ -46,5 +46,11 @@ Próximos passos que posso ajudar a executar:
 - Substituir o SVG pelo PNG que você enviou (posso gerar o base64 se quiser incorporar a imagem diretamente).
 - Integrar com Firebase/Realtime para sincronização entre painéis (tela principal e tela de espera) em tempo real.
 
+Deploy alternativo para `gh-pages` e domínio customizado
+- Adicionei também um workflow que publica a raiz do repositório na branch `gh-pages` usando `peaceiris/actions-gh-pages`. Se preferir esse fluxo, o Pages pode ficar servido a partir da branch `gh-pages`.
+- Para configurar um domínio customizado, crie um arquivo `CNAME` na raiz contendo apenas o domínio (ex: `meusite.com`) e commite antes do deploy. O workflow `gh-pages` respeitará esse arquivo e o publicará.
+
+Se quiser que eu adicione o `CNAME` (e.g. `www.seudominio.com`), me passe o domínio e eu incluo o arquivo e commito automaticamente.
+
 Diga qual opção prefere (ex.: "publique no meu GitHub" ou "gere workflow para GitHub Pages" ou "substituir logo pelo PNG"), e eu preparo os comandos/arquivos.
 ```
